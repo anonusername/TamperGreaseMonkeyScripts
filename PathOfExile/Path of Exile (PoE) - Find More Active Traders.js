@@ -7,6 +7,7 @@
 // @match        https://www.pathofexile.com/trade/*
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js
 // @grant        none
+// @license      GPL-3.0-or-later
 // ==/UserScript==
 
 (function($) {
