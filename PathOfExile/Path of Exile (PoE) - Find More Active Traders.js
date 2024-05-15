@@ -1,25 +1,24 @@
 // ==UserScript==
 // @name         Path of Exile (PoE) - Find More Active Traders
 // @namespace    https://github.com/anonusername/TamperGreaseMonkeyScripts
-// @version      1.2
+// @version      1.4.0
 // @description  Get better results from PoE trade by color coding non-English speakers in green who will most likely be available to trade
 // @author       EVIL Gibson (@EVILGibsonSA)
 // @match        https://www.pathofexile.com/trade/*
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js
 // @grant        none
 // @license      GPL-3.0-or-later
+// @supportURL   https://github.com/anonusername/TamperGreaseMonkeyScripts/issues
 // ==/UserScript==
 
 (function($) {
     'use strict';
 
-    // Global constant variables
     const logging = false;
     const EnglishColor = "darkred";
     const NonEnglishColor = "darkgreen";
 
     function log(message) {
-        // Define your logging mechanism here
         if(logging){
         console.log(message);
         }
@@ -28,7 +27,7 @@
 // change the CSS background color of the names according to their language
   
     function processListedResponse(responseData) {
-        // Using the responseData, find
+        //Figure out and change the color names in Listed for the leftmost view (see screenshot)
         $(".row .profile-link").each(function () {
             // Get the ID of the row
             var rowID = $(this).closest(".row").data("id");
@@ -59,6 +58,41 @@
                 $(this).css("background-color", color);
             }
         });
+				
+      
+        //For the other views in Listed trade that uses the class "character-name" instead (compact and two colum views)
+        $(".row .character-name").each(function () {
+            // Get the ID of the row
+            var rowID = $(this).closest(".row").data("id");
+
+            // Create a Map to store id and color
+            var ColorID = new Map();
+
+            // Iterate through each item in the "result" array
+            responseData.result.forEach(function (item) {
+                // Check if the item has the "listing" property and "whisper" within it.
+                if (item.listing && item.listing.whisper) {
+                    // Regular expression to check to see if the whisper text contains English
+                    var pattern = /listed for/i;
+                    if (pattern.test(item.listing.whisper)) {
+                        ColorID.set(item.id, EnglishColor);
+                    } else {
+                        ColorID.set(item.id, NonEnglishColor);
+                    }
+                }
+            });
+
+            // Check if the rowID exists in the ColorID map
+            if (ColorID.has(rowID)) {
+                // Get the color corresponding to the rowID from the ColorID map
+                var langColor = ColorID.get(rowID);
+
+                // Set the background color of the character name class which contains the name
+                $(this).css({"background-color": langColor, "font-weight": "bold", "color": "brightyellow"});
+
+            }
+        });      
+      
     }
 //PoE "Search Listed Items" TRADE SECTION
 // We can use the response to find out who and who doesn't speak English.
@@ -135,9 +169,9 @@
         });
     }
 
-    // Call the function to start handling fetch requests
+    // Call the function to start handling fetch requests for Listed Items trade
     handleFetchRequests();
 
-    // Call the function to observe DOM changes
+    // Call the function to observe DOM changes for Bulk Trade exchange
     observeDOM();
 })(jQuery);
