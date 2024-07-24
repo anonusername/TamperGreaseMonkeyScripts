@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Path of Exile (PoE) - Find More Active Traders
+// @name         PoE - Find More Active Traders via Language
 // @namespace    https://github.com/anonusername/TamperGreaseMonkeyScripts
-// @version      1.4.0
+// @version      1.4.1
 // @description  Get better results from PoE trade by color coding non-English speakers in green who will most likely be available to trade
 // @author       EVIL Gibson (@EVILGibsonSA)
 // @match        https://www.pathofexile.com/trade/*
